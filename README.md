@@ -3,7 +3,7 @@
 Real-time and historical observability for AI agents using S2.dev streams and OpenTelemetry.
 
 ## Architecture
-[HLD](./docs/AgentHLD.png)
+![HLD](./docs/AgentHLD.png)
 
 **Real-time**: Agent writes events directly to S2 stream → User tails stream to watch agent live  
 **Analytics**: Agent emits OTLP spans → Collector → ClickHouse for historical queries

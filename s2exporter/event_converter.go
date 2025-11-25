@@ -180,3 +180,4 @@ func (e *S2Event) ToJSON() ([]byte, error) {
 	return json.Marshal(e)
 }
 
+

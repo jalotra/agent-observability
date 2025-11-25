@@ -46,3 +46,4 @@ class Event:
             data=obj.get("data", {}),
         )
 
+

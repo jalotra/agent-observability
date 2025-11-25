@@ -18,3 +18,4 @@ class Config:
         if not self.s2_endpoint and not self.otlp_endpoint:
             raise ValueError("At least one of s2_endpoint or otlp_endpoint must be set")
 
+

@@ -50,3 +50,4 @@ func SetupTracing(ctx context.Context, cfg *Config) (*sdktrace.TracerProvider, e
 	return tp, nil
 }
 
+

@@ -232,32 +232,20 @@
         </div>
 
         <h2>Introduction</h2>
-        <p>
-            AI agents are becoming increasingly popular, and with them, the need for observability is growing.
-            Observability is usually a paid product with pricing based on per user seat and number of traces.
-            Adobe already has a tremendous support for OTEL spans with a lot of backends : prometheus, new-relic being the final ingestion layer.
-            Agents work however needs a strongly consistent write data model (both internal and external agents)
-            This work is a proof of concept for a dual-write architecture for AI agent observability that enables both 
-            real-time monitoring and historical analytics. The system writes events directly to 
-            S2.dev streams for sub-100ms visibility while simultaneously emitting OpenTelemetry 
-            spans to a collector pipeline for OLAP storage.
-            This is important for debugging, monitoring, and optimizing the agent's performance and iterate quickly without paying too much cost upfront.
-        </p>
-        <p>
-            I present a dual-write architecture for AI agent observability that enables both 
-            real-time monitoring and historical analytics.
+        <ul>
+            <p>1. AI agents are becoming increasingly popular, and with them, the need for observability is growing</p  >
+            <p>2. Observability is usually a paid product with pricing based on per user seat and number of traces</p>
+            <p>3. Adobe already has tremendous support for OTEL spans with multiple backends: Prometheus, New Relic being the final ingestion layer</p>
+            <p>4. Agent workflows need a strongly consistent write data model (both internal and external agents)</p>
+            <p>5. This work is a proof of concept for a <strong>dual-write architecture</strong> that enables both real-time monitoring and historical analytics</p>
+            <p>6. The system writes events directly to S2.dev streams for sub-100ms visibility while simultaneously emitting OpenTelemetry spans to a collector pipeline for OLAP storage</p>
+            <p>7. This enables debugging, monitoring, and optimizing agent performance — iterate quickly without paying too much cost upfront</p>
+        </ul>
 
         <h2>Abstract</h2>
         <p>
-            I present a dual-write architecture for AI agent observability that enables both 
-            real-time monitoring and historical analytics. The system writes events directly to 
-            S2.dev streams for sub-100ms visibility while simultaneously emitting OpenTelemetry 
-            spans to a collector pipeline for OLAP storage.
-        </p>
-        <p>
-            This approach addresses a key challenge in agent observability: users need to watch 
-            agents work in real-time (debugging, demos, trust-building), while operators need 
-            historical data for analytics and optimization.
+           <p> 1. For realtime users we use <a href="https://s2.dev">S2.dev</a> streams for sub-100ms visibility</p>
+           <p> 2. For analytics we emit OpenTelemetry spans to a <a href="https://opentelemetry.io/docs/collector/">collector</a> pipeline for OLAP storage</p>
         </p>
 
         <h2>Architecture</h2>

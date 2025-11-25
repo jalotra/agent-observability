@@ -40,3 +40,4 @@ func EventFromJSON(data []byte) (*Event, error) {
 	return &e, nil
 }
 
+

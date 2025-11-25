@@ -10,3 +10,4 @@ require (
 	go.opentelemetry.io/otel/trace v1.28.0
 )
 
+

@@ -188,3 +188,4 @@ func (c *S2Client) doWithRetry(ctx context.Context, req *http.Request, maxRetrie
 	return nil, fmt.Errorf("max retries exceeded: %w", lastErr)
 }
 
+

@@ -166,3 +166,4 @@ func (r *StreamReader) ReadEvents(ctx context.Context) ([]*Event, error) {
 	return events, nil
 }
 
+

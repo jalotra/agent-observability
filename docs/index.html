@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agent Observability — Real-time & Historical Tracing for AI Agents</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --text: #1a1a1a;
+            --text-secondary: #555;
+            --accent: #2563eb;
+            --bg: #fafafa;
+            --code-bg: #f1f5f9;
+            --border: #e2e8f0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Crimson Pro', Georgia, serif;
+            font-size: 19px;
+            line-height: 1.7;
+            color: var(--text);
+            background: var(--bg);
+            padding: 0 20px;
+        }
+
+        .container {
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 80px 0 120px;
+        }
+
+        h1 {
+            font-size: 2.4em;
+            font-weight: 600;
+            line-height: 1.2;
+            margin-bottom: 16px;
+            letter-spacing: -0.02em;
+        }
+
+        .tagline {
+            font-size: 1.15em;
+            color: var(--text-secondary);
+            font-style: italic;
+            margin-bottom: 40px;
+        }
+
+        .links {
+            display: flex;
+            gap: 24px;
+            margin-bottom: 60px;
+            flex-wrap: wrap;
+        }
+
+        .links a {
+            color: var(--accent);
+            text-decoration: none;
+            font-size: 0.95em;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .links a:hover {
+            text-decoration: underline;
+        }
+
+        h2 {
+            font-size: 1.4em;
+            font-weight: 600;
+            margin: 48px 0 16px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+        }
+
+        h2:first-of-type {
+            border-top: none;
+            padding-top: 0;
+        }
+
+        p {
+            margin-bottom: 16px;
+        }
+
+        .diagram {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 24px;
+            margin: 24px 0;
+            overflow-x: auto;
+        }
+
+        .diagram img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85em;
+            background: var(--code-bg);
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        pre {
+            background: #1e293b;
+            color: #e2e8f0;
+            border-radius: 8px;
+            padding: 20px 24px;
+            margin: 24px 0;
+            overflow-x: auto;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        pre code {
+            background: none;
+            padding: 0;
+            font-size: inherit;
+        }
+
+        .highlight {
+            color: #7dd3fc;
+        }
+
+        .string {
+            color: #86efac;
+        }
+
+        .comment {
+            color: #64748b;
+        }
+
+        ul {
+            margin: 16px 0 16px 24px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin: 24px 0;
+        }
+
+        .feature {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .feature h3 {
+            font-size: 1em;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .feature p {
+            font-size: 0.9em;
+            color: var(--text-secondary);
+            margin: 0;
+        }
+
+        .citation {
+            background: var(--code-bg);
+            border-radius: 8px;
+            padding: 20px 24px;
+            margin: 24px 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        footer {
+            margin-top: 80px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+            font-size: 0.9em;
+            color: var(--text-secondary);
+        }
+
+        @media (max-width: 600px) {
+            body {
+                font-size: 17px;
+            }
+            h1 {
+                font-size: 1.8em;
+            }
+            .features {
+                grid-template-columns: 1fr;
+            }
+            .links {
+                gap: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Agent Observability</h1>
+        <p class="tagline">Real-time and historical tracing for AI agents using S2.dev streams and OpenTelemetry</p>
+
+        <div class="links">
+            <a href="https://github.com/user/agent-observability">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                Code
+            </a>
+            <a href="#quickstart">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                Quick Start
+            </a>
+            <a href="architecture.puml">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+                Diagrams
+            </a>
+        </div>
+
+        <h2>Introduction</h2>
+        <p>
+            AI agents are becoming increasingly popular, and with them, the need for observability is growing.
+            Observability is usually a paid product with pricing based on per user seat and number of traces.
+            Adobe already has a tremendous support for OTEL spans with a lot of backends : prometheus, new-relic being the final ingestion layer.
+            Agents work however needs a strongly consistent write data model (both internal and external agents)
+            This work is a proof of concept for a dual-write architecture for AI agent observability that enables both 
+            real-time monitoring and historical analytics. The system writes events directly to 
+            S2.dev streams for sub-100ms visibility while simultaneously emitting OpenTelemetry 
+            spans to a collector pipeline for OLAP storage.
+            This is important for debugging, monitoring, and optimizing the agent's performance and iterate quickly without paying too much cost upfront.
+        </p>
+        <p>
+            I present a dual-write architecture for AI agent observability that enables both 
+            real-time monitoring and historical analytics.
+
+        <h2>Abstract</h2>
+        <p>
+            I present a dual-write architecture for AI agent observability that enables both 
+            real-time monitoring and historical analytics. The system writes events directly to 
+            S2.dev streams for sub-100ms visibility while simultaneously emitting OpenTelemetry 
+            spans to a collector pipeline for OLAP storage.
+        </p>
+        <p>
+            This approach addresses a key challenge in agent observability: users need to watch 
+            agents work in real-time (debugging, demos, trust-building), while operators need 
+            historical data for analytics and optimization.
+        </p>
+
+        <h2>Architecture</h2>
+        <div class="diagram">
+            <img src="AgentHLD.png" alt="Architecture">
+        </div>
+
+        <div class="features">
+            <div class="feature">
+                <h3>Real-time Path</h3>
+                <p>Events written directly to S2 streams with &lt;100ms latency. Users tail the stream to watch agent activity live.</p>
+            </div>
+            <div class="feature">
+                <h3>Analytics Path</h3>
+                <p>OTLP spans batched through OTel Collector to ClickHouse for historical queries and dashboards.</p>
+            </div>
+            <div class="feature">
+                <h3>GenAI Semconv</h3>
+                <p>Uses standard OpenTelemetry GenAI semantic conventions for tool interoperability.</p>
+            </div>
+            <div class="feature">
+                <h3>Simple SDK</h3>
+                <p>Clean API hides dual-write complexity. Session → Invocation → ToolCall/LLMCall.</p>
+            </div>
+        </div>
+
+        <h2 id="quickstart">Quick Start</h2>
+        <p>Install the SDK and instrument your agent:</p>
+
+<pre><code><span class="comment"># Python</span>
+<span class="highlight">from</span> agentsdk <span class="highlight">import</span> Session, Config
+
+config = Config(
+    s2_endpoint=<span class="string">"https://api.s2.dev"</span>,
+    s2_api_key=<span class="string">"..."</span>,
+    otlp_endpoint=<span class="string">"localhost:4317"</span>,
+)
+
+<span class="highlight">with</span> Session(config, agent_name=<span class="string">"MyBot"</span>) <span class="highlight">as</span> session:
+    <span class="highlight">with</span> session.invoke(user_input) <span class="highlight">as</span> inv:
+        <span class="highlight">with</span> inv.tool_call(<span class="string">"search"</span>, {<span class="string">"q"</span>: query}) <span class="highlight">as</span> tc:
+            result = do_search(query)
+            tc.end(result)
+        
+        <span class="highlight">with</span> inv.llm_call(<span class="string">"openai"</span>, <span class="string">"gpt-4"</span>) <span class="highlight">as</span> llm:
+            response = call_llm(prompt)
+            llm.end(response, input_tokens=100, output_tokens=50)
+        
+        inv.end(response)</code></pre>
+
+        <p>Watch the session in real-time:</p>
+
+<pre><code><span class="comment"># Terminal output</span>
+$ python stream_reader.py agent-session-abc123
+
+[14:23:01] 🚀 Session started - Agent: MyBot
+[14:23:01] 🤖 Agent invoked: "What's the weather?"
+[14:23:01] 🔧 Tool: get_weather {"location": "SF"}
+[14:23:01]    └─ Result: {"temp": 72} (45ms)
+[14:23:02] 🧠 LLM: openai/gpt-4
+[14:23:02]    └─ Tokens: 150→50 (340ms)
+[14:23:02] ✅ Response: "It's 72°F in SF" (890ms)</code></pre>
+
+        <h2>Components</h2>
+        <ul>
+            <li><strong>Agent SDK</strong> (Go, Python) — Dual-write instrumentation library</li>
+            <li><strong>S2 Exporter</strong> — Optional OTel collector exporter for S2.dev</li>
+            <li><strong>Stream Reader</strong> — CLI tool to tail agent sessions in real-time</li>
+            <li><strong>Collector Config</strong> — Pre-configured OTLP → ClickHouse pipeline</li>
+        </ul>
+
+        <h2>Citation</h2>
+        <div class="citation ">
+            <pre>
+            <code>
+                @software{
+                    agent_observability,
+                    author = {Shivam Jalotra},
+                    author_email = {sjalotra@adobe.com},
+                    title = {Agent Observability: Real-time and Historical Tracing for AI Agents},
+                    year = {2024},
+                    url = {https://github.com/user/agent-observability}
+                }
+            </code>
+        </pre>
+        </div>
+
+        <footer>
+            Released under MIT License
+        </footer>
+    </div>
+</body>
+</html>
+

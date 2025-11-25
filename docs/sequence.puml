@@ -1,0 +1,105 @@
+@startuml Agent Session Sequence
+
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam roundcorner 15
+skinparam sequenceMessageAlign center
+skinparam sequenceBoxBorderColor #333333
+skinparam sequenceLifeLineBorderColor #333333
+skinparam sequenceParticipantBorderColor #333333
+skinparam sequenceParticipantBackgroundColor white
+skinparam sequenceActorBorderColor #333333
+skinparam sequenceDividerBackgroundColor #F5F5F5
+skinparam sequenceGroupBackgroundColor #FAFAFA
+
+title Agent Session - Sequence Diagram
+
+actor User #E8F5E9
+participant "AI Agent" as Agent #C8FACC
+participant "Agent SDK" as SDK #C8FACC
+database "S2 Stream" as S2 #E3F2FD
+participant "OTel Collector" as Collector #FFF6CC
+database "ClickHouse" as CH #FFEBEE
+actor Observer #E6E6FA
+
+== Session Start ==
+
+User -> Agent: Send message
+activate Agent #C8FACC
+
+Agent -> SDK: NewSession()
+activate SDK #C8FACC
+SDK -> S2: CreateStream(agent-session-xyz)
+S2 --> SDK: Stream created
+SDK -> S2: Emit(session.start)
+SDK --> Agent: session
+deactivate SDK
+
+Observer -> S2: Tail stream
+note right of Observer: Real-time\nwatching begins
+
+== Agent Invocation ==
+
+Agent -> SDK: StartAgentInvocation(input)
+activate SDK #C8FACC
+SDK -> S2: Emit(agent.start)
+SDK --> Agent: invocation
+deactivate SDK
+
+== Tool Execution ==
+
+Agent -> SDK: StartToolCall("search", args)
+activate SDK #C8FACC
+SDK -> S2: Emit(tool.start)
+SDK --> Agent: toolCall
+deactivate SDK
+
+Agent -> Agent: Execute tool
+
+Agent -> SDK: toolCall.End(result)
+activate SDK #C8FACC
+SDK -> S2: Emit(tool.end)
+SDK -> Collector: OTLP span (tool)
+deactivate SDK
+
+== LLM Call ==
+
+Agent -> SDK: StartLLMCall("openai", "gpt-4")
+activate SDK #C8FACC
+SDK -> S2: Emit(llm.start)
+SDK --> Agent: llmCall
+deactivate SDK
+
+Agent -> Agent: Call LLM API
+
+Agent -> SDK: llmCall.End(response, tokens)
+activate SDK #C8FACC
+SDK -> S2: Emit(llm.end)
+SDK -> Collector: OTLP span (llm)
+deactivate SDK
+
+== Invocation Complete ==
+
+Agent -> SDK: invocation.End(output)
+activate SDK #C8FACC
+SDK -> S2: Emit(agent.end)
+SDK -> Collector: OTLP span (agent)
+deactivate SDK
+
+Agent --> User: Response
+deactivate Agent
+
+== Background Processing ==
+
+Collector -> Collector: Batch spans
+Collector -> CH: Insert traces
+
+== Session End ==
+
+Agent -> SDK: session.Close()
+activate SDK #C8FACC
+SDK -> S2: Emit(session.end)
+SDK -> Collector: Flush spans
+deactivate SDK
+
+@enduml

@@ -1,0 +1,124 @@
+@startuml Agent Observability HLD
+
+left to right direction
+
+skinparam backgroundColor white
+skinparam linetype ortho
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+skinparam roundcorner 15
+skinparam classBorderColor #333333
+skinparam interfaceBorderColor #333333
+skinparam classFontColor black
+skinparam classBackgroundColor white
+skinparam componentBackgroundColor white
+skinparam componentBorderColor #333333
+skinparam databaseBackgroundColor white
+skinparam databaseBorderColor #333333
+skinparam actorBorderColor #333333
+
+title AI Agent Observability - High Level Design
+
+' ====================================================
+' Actors
+' ====================================================
+
+actor "User" as user
+actor "Observer" as observer
+
+' ====================================================
+' Agent Runtime
+' ====================================================
+
+package "Agent Runtime" #E8F5E9 {
+    component "AI Agent" as agent
+    
+    package "Agent SDK" #C8FACC {
+        component "S2 Client" as s2client
+        component "OTLP Tracer" as tracer
+    }
+}
+
+' ====================================================
+' Real-time Layer (S2)
+' ====================================================
+
+package "Real-time Layer" #E3F2FD {
+    database "S2 Stream\n(per session)" as s2stream
+}
+
+' ====================================================
+' Analytics Pipeline
+' ====================================================
+
+package "Analytics Pipeline" #FFF6CC {
+    component "OTel Collector" as collector {
+        component "OTLP Receiver" as otlp_recv
+        component "Batch Processor" as batch
+        component "Exporter" as exporter
+    }
+}
+
+' ====================================================
+' Storage Layer
+' ====================================================
+
+package "Storage Layer" #FFEBEE {
+    database "ClickHouse\n(OLAP)" as clickhouse
+}
+
+' ====================================================
+' Tooling
+' ====================================================
+
+package "Tooling" #E6E6FA {
+    component "Stream Reader\n(CLI)" as reader
+}
+
+' ====================================================
+' Relationships
+' ====================================================
+
+user --> agent : 1. Chat/Query
+agent --> s2client : 2a. Events
+agent --> tracer : 2b. Spans
+
+s2client --> s2stream : 3a. Real-time\n(direct write)
+tracer --> otlp_recv : 3b. OTLP\n(batched)
+
+otlp_recv --> batch
+batch --> exporter
+exporter --> clickhouse : 4. Store traces
+
+observer --> reader : 5. Watch
+reader --> s2stream : 6. Tail stream
+
+agent --> user : 7. Response
+
+' ====================================================
+' Notes
+' ====================================================
+
+note bottom of s2stream
+  Real-time Path:
+  - Events written immediately
+  - Latency < 100ms
+  - Stream: agent-session-{uuid}
+end note
+
+note bottom of clickhouse
+  Analytics Path:
+  - Historical storage
+  - SQL queryable
+  - Dashboards & metrics
+end note
+
+note bottom of reader
+  Real-time Viewer:
+  - Tail S2 stream
+  - Format events
+  - Watch agent activity
+end note
+
+@enduml

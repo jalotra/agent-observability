@@ -1,0 +1,144 @@
+@startuml Data Flow
+
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam roundcorner 15
+skinparam ActivityBackgroundColor white
+skinparam ActivityBorderColor #333333
+skinparam ActivityDiamondBackgroundColor #FFF6CC
+skinparam ActivityDiamondBorderColor #333333
+skinparam SwimlaneBorderColor #333333
+skinparam PartitionBorderColor #333333
+
+title Agent Observability - Data Flow
+
+|#E8F5E9| User |
+start
+:Send message to agent;
+
+|#C8FACC| Agent |
+:Process user input;
+:Initialize SDK session;
+
+|#C8FACC| SDK |
+fork
+    |#E3F2FD| S2 Stream |
+    :Store session.start event;
+fork again
+    |#FFF6CC| Collector |
+    :Queue session span;
+end fork
+
+|#E3F2FD| S2 Stream |
+:Notify subscribers;
+
+|#E6E6FA| Stream Reader |
+:Receive event;
+:Display: 🚀 Session started;
+
+|#C8FACC| Agent |
+:Start agent invocation;
+
+|#C8FACC| SDK |
+fork
+    |#E3F2FD| S2 Stream |
+    :Store agent.start event;
+fork again
+    |#FFF6CC| Collector |
+    :Start agent span;
+end fork
+
+|#E6E6FA| Stream Reader |
+:Display: 🤖 Agent invoked;
+
+partition "Tool Execution" #FAFAFA {
+    |#C8FACC| Agent |
+    :Call external tool;
+    
+    |#C8FACC| SDK |
+    fork
+        |#E3F2FD| S2 Stream |
+        :Store tool.start event;
+    fork again
+        |#FFF6CC| Collector |
+        :Start tool span;
+    end fork
+    
+    |#E6E6FA| Stream Reader |
+    :Display: 🔧 Tool call started;
+    
+    |#C8FACC| Agent |
+    :Receive tool result;
+    
+    |#C8FACC| SDK |
+    fork
+        |#E3F2FD| S2 Stream |
+        :Store tool.end event;
+    fork again
+        |#FFF6CC| Collector |
+        :End tool span;
+    end fork
+    
+    |#E6E6FA| Stream Reader |
+    :Display: └─ Tool result;
+}
+
+partition "LLM Call" #FAFAFA {
+    |#C8FACC| Agent |
+    :Call LLM API;
+    
+    |#C8FACC| SDK |
+    fork
+        |#E3F2FD| S2 Stream |
+        :Store llm.start event;
+    fork again
+        |#FFF6CC| Collector |
+        :Start LLM span;
+    end fork
+    
+    |#E6E6FA| Stream Reader |
+    :Display: 🧠 LLM call started;
+    
+    |#C8FACC| Agent |
+    :Receive LLM response;
+    
+    |#C8FACC| SDK |
+    fork
+        |#E3F2FD| S2 Stream |
+        :Store llm.end event;
+    fork again
+        |#FFF6CC| Collector |
+        :End LLM span;
+    end fork
+    
+    |#E6E6FA| Stream Reader |
+    :Display: └─ Tokens used;
+}
+
+|#C8FACC| Agent |
+:Generate final response;
+
+|#C8FACC| SDK |
+fork
+    |#E3F2FD| S2 Stream |
+    :Store agent.end event;
+fork again
+    |#FFF6CC| Collector |
+    :End agent span;
+end fork
+
+|#E6E6FA| Stream Reader |
+:Display: ✅ Agent responded;
+
+|#FFF6CC| Collector |
+:Batch spans;
+:Process & enrich;
+
+|#FFEBEE| ClickHouse |
+:Insert trace records;
+
+|#E8F5E9| User |
+:Receive response;
+stop
+
+@enduml

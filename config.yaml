@@ -1,0 +1,58 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+
+exporters:
+  # S2.dev exporter for real-time streaming (optional - agent can write directly)
+  s2:
+    endpoint: https://api.s2.dev
+    api_key: ${S2_API_KEY}
+    stream_prefix: "agent-session-"
+    batch_size: 100
+    flush_interval: 5s
+
+  # ClickHouse for OLAP analytics
+  clickhouse:
+    endpoint: tcp://localhost:9000
+    database: agent_traces
+    username: ${CLICKHOUSE_USER:-default}
+    password: ${CLICKHOUSE_PASSWORD:-}
+    ttl: 72h
+    traces_table_name: otel_traces
+    timeout: 10s
+    retry_on_failure:
+      enabled: true
+      initial_interval: 5s
+      max_interval: 30s
+      max_elapsed_time: 300s
+
+  # Debug logging (development)
+  debug:
+    verbosity: detailed
+
+processors:
+  batch:
+    timeout: 5s
+    send_batch_size: 1000
+
+  memory_limiter:
+    check_interval: 1s
+    limit_mib: 512
+    spike_limit_mib: 128
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [memory_limiter, batch]
+      exporters: [clickhouse]
+    
+    # Optional: also export to S2 from collector (if agent doesn't write directly)
+    # traces/s2:
+    #   receivers: [otlp]
+    #   processors: [batch]
+    #   exporters: [s2]

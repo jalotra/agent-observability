@@ -5,19 +5,19 @@ Real-time and historical observability for AI agents using S2.dev streams and Op
 ## Architecture
 
 ```
-                              ┌──────────────────┐
-                         ┌───▶│   S2 Stream      │◀──── User watches real-time
-                         │    │  (per session)   │
-                         │    └──────────────────┘
-┌──────────┐      ┌──────┴────┐           
-│   User   │─────▶│   Agent   │           
-└──────────┘      │   (SDK)   │           
-                  └──────┬────┘           
-                         │ OTLP           
-                         ▼                
-                  ┌──────────────┐         ┌───────────────┐
-                  │  Collector   │────────▶│     OLAP      │
-                  └──────────────┘         └───────────────┘
+                              
+                            S2 Stream       User watches real-time
+                               (per session)   
+                             
+                 
+   User      Agent              
+         (SDK)              
+                             
+                          OTLP           
+                                         
+                           
+                    Collector        OLAP      
+                           
 ```
 
 **Real-time**: Agent writes events directly to S2 stream → User tails stream to watch agent live  
@@ -99,13 +99,13 @@ python examples/stream_reader/main.py agent-session-$ID --api-key $S2_API_KEY
 
 Output:
 ```
-[14:23:01.234] 🚀 Session started - Agent: MyBot
-[14:23:01.456] 🤖 Agent invoked: "What's the weather?"
-[14:23:01.567] 🔧 Tool call: get_weather - Args: {"location": "SF"}
-[14:23:01.678]    └─ Result: {"temp": 72} (111ms)
-[14:23:01.890] 🧠 LLM call: openai / gpt-4
-[14:23:02.234]    └─ Tokens: 150 in / 50 out (344ms)
-[14:23:02.345] ✅ Agent responded: "It's 72°F in SF" (889ms)
+[14:23:01.234]  Session started - Agent: MyBot
+[14:23:01.456]  Agent invoked: "What's the weather?"
+[14:23:01.567]  Tool call: get_weather - Args: {"location": "SF"}
+[14:23:01.678]     Result: {"temp": 72} (111ms)
+[14:23:01.890]  LLM call: openai / gpt-4
+[14:23:02.234]     Tokens: 150 in / 50 out (344ms)
+[14:23:02.345]  Agent responded: "It's 72°F in SF" (889ms)
 ```
 
 ### 4. Run Collector (for OLAP)
@@ -182,16 +182,16 @@ The SDK uses standard OTel GenAI attributes:
 ## Project Structure
 
 ```
-├── agentsdk/
-│   ├── go/              # Go SDK
-│   └── python/          # Python SDK
-├── s2exporter/          # OTel S2 exporter (optional)
-├── otelcol-agent/       # Custom collector
-├── examples/
-│   ├── go_agent/
-│   ├── python_agent/
-│   └── stream_reader/   # Real-time viewer
-└── config.yaml          # Collector config
+ agentsdk/
+    go/              # Go SDK
+    python/          # Python SDK
+ s2exporter/          # OTel S2 exporter (optional)
+ otelcol-agent/       # Custom collector
+ examples/
+    go_agent/
+    python_agent/
+    stream_reader/   # Real-time viewer
+ config.yaml          # Collector config
 ```
 
 ## License

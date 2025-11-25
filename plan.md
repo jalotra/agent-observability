@@ -3,21 +3,21 @@
 ## Architecture Overview
 
 ```
-                              ┌──────────────────┐
-                         ┌───▶│   S2 Stream      │◀──── User reads real-time
-                         │    │  (per session)   │       (stream_reader)
-                         │    └──────────────────┘
-┌──────────┐      ┌──────┴────┐           
-│   User   │─────▶│   Agent   │           
-└──────────┘      │   (SDK)   │           
-                  └──────┬────┘           
-                         │                
-                         │ OTLP spans     
-                         ▼                
-                  ┌──────────────┐         ┌───────────────┐
-                  │  Collector   │────────▶│     OLAP      │
-                  │   (OTel)     │         │ (ClickHouse)  │
-                  └──────────────┘         └───────────────┘
+                              
+                            S2 Stream       User reads real-time
+                               (per session)          (stream_reader)
+                             
+                 
+   User      Agent              
+         (SDK)              
+                             
+                                         
+                          OTLP spans     
+                                         
+                           
+                    Collector        OLAP      
+                     (OTel)               (ClickHouse)  
+                           
 ```
 
 ### Data Flow
@@ -113,13 +113,13 @@ python stream_reader/main.py agent-session-abc123 --api-key $S2_API_KEY
 
 Output:
 ```
-[14:23:01.234] 🚀 Session started - Agent: WeatherBot
-[14:23:01.456] 🤖 Agent invoked: "What's the weather like?"
-[14:23:01.567] 🔧 Tool call: get_weather - Args: {"location": "SF"}
-[14:23:01.678]    └─ Result: {"temperature": 72, "condition": "sunny"} (111ms)
-[14:23:01.890] 🧠 LLM call: openai / gpt-4
-[14:23:02.234]    └─ Tokens: 150 in / 50 out (344ms)
-[14:23:02.345] ✅ Agent responded: "It's 72°F and sunny in SF" (889ms)
+[14:23:01.234]  Session started - Agent: WeatherBot
+[14:23:01.456]  Agent invoked: "What's the weather like?"
+[14:23:01.567]  Tool call: get_weather - Args: {"location": "SF"}
+[14:23:01.678]     Result: {"temperature": 72, "condition": "sunny"} (111ms)
+[14:23:01.890]  LLM call: openai / gpt-4
+[14:23:02.234]     Tokens: 150 in / 50 out (344ms)
+[14:23:02.345]  Agent responded: "It's 72°F and sunny in SF" (889ms)
 ```
 
 ## GenAI Semantic Conventions
@@ -186,27 +186,27 @@ GROUP BY agent
 
 ```
 .
-├── agentsdk/
-│   ├── go/                    # Go SDK
-│   │   ├── config.go
-│   │   ├── session.go
-│   │   ├── events.go
-│   │   ├── s2client.go
-│   │   └── tracing.go
-│   └── python/                # Python SDK
-│       └── agentsdk/
-│           ├── config.py
-│           ├── session.py
-│           ├── events.py
-│           └── s2client.py
-├── s2exporter/                # OTel S2 exporter (optional)
-├── otelcol-agent/             # Custom collector
-├── examples/
-│   ├── go_agent/              # Go agent example
-│   ├── python_agent/          # Python agent example
-│   └── stream_reader/         # Real-time viewer
-├── config.yaml                # Collector config
-└── README.md
+ agentsdk/
+    go/                    # Go SDK
+       config.go
+       session.go
+       events.go
+       s2client.go
+       tracing.go
+    python/                # Python SDK
+        agentsdk/
+            config.py
+            session.py
+            events.py
+            s2client.py
+ s2exporter/                # OTel S2 exporter (optional)
+ otelcol-agent/             # Custom collector
+ examples/
+    go_agent/              # Go agent example
+    python_agent/          # Python agent example
+    stream_reader/         # Real-time viewer
+ config.yaml                # Collector config
+ README.md
 ```
 
 ## Key Design Decisions

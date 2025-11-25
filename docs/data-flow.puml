@@ -34,7 +34,7 @@ end fork
 
 |#E6E6FA| Stream Reader |
 :Receive event;
-:Display: 🚀 Session started;
+:Display:  Session started;
 
 |#C8FACC| Agent |
 :Start agent invocation;
@@ -49,7 +49,7 @@ fork again
 end fork
 
 |#E6E6FA| Stream Reader |
-:Display: 🤖 Agent invoked;
+:Display:  Agent invoked;
 
 partition "Tool Execution" #FAFAFA {
     |#C8FACC| Agent |
@@ -65,7 +65,7 @@ partition "Tool Execution" #FAFAFA {
     end fork
     
     |#E6E6FA| Stream Reader |
-    :Display: 🔧 Tool call started;
+    :Display:  Tool call started;
     
     |#C8FACC| Agent |
     :Receive tool result;
@@ -80,7 +80,7 @@ partition "Tool Execution" #FAFAFA {
     end fork
     
     |#E6E6FA| Stream Reader |
-    :Display: └─ Tool result;
+    :Display:  Tool result;
 }
 
 partition "LLM Call" #FAFAFA {
@@ -97,7 +97,7 @@ partition "LLM Call" #FAFAFA {
     end fork
     
     |#E6E6FA| Stream Reader |
-    :Display: 🧠 LLM call started;
+    :Display:  LLM call started;
     
     |#C8FACC| Agent |
     :Receive LLM response;
@@ -112,7 +112,7 @@ partition "LLM Call" #FAFAFA {
     end fork
     
     |#E6E6FA| Stream Reader |
-    :Display: └─ Tokens used;
+    :Display:  Tokens used;
 }
 
 |#C8FACC| Agent |
@@ -128,7 +128,7 @@ fork again
 end fork
 
 |#E6E6FA| Stream Reader |
-:Display: ✅ Agent responded;
+:Display:  Agent responded;
 
 |#FFF6CC| Collector |
 :Batch spans;
